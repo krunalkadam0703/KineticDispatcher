@@ -100,29 +100,36 @@ sequenceDiagram
     participant M as Merchant Tablet
     participant R as Rider Fleet
 
-    Note over C, R: Phase 1: Predictive Ingestion (System Initiation)
-    C->>PE: Order Placed (Item ID, Qty)
-    PE->>PE: Calculate T_Physics (Base * Rush * Env)
-    
-    rect rgb(255, 243, 205)
-    Note over M, PE: Phase 2: Signal Filtering (The "Lie" Buffer)
-    M-->>PE: "Ready" Click (Untrusted Manual Signal)
-    PE->>PE: Validation: max(Signal, Physics)
+    %% Phase 1: Predictive Ingestion
+    rect rgb(102, 178, 255)
+        Note over C,R: Phase 1: Predictive Ingestion (System Initiation)
+        C->>PE: Order Placed (Item ID, Qty)
+        PE->>PE: Calculate T_Physics (Base * Rush * Env)
     end
 
+    %% Phase 2: Signal Filtering (The "Lie" Buffer)
+    rect rgb(255, 204, 102)
+        Note over M,PE: Phase 2: Signal Filtering (The "Lie" Buffer)
+        M-->>PE: "Ready" Click (Untrusted Manual Signal)
+        PE->>PE: Validation: max(Signal, Physics)
+    end
+
+    %% Combine with learned bias
     PM->>PM: Fetch learned Beta (Behavioral Bias)
     PE->>PM: Combine: T_FOR = Validated Signal + Beta
-    
-    rect rgb(224, 242, 241)
-    Note over PM, R: Phase 3: Synchronized Execution
-    PM->>R: Dispatch Trigger (T_FOR - Rider_ETA)
-    R->>M: Rider Arrives (Just-In-Time)
+
+    %% Phase 3: Synchronized Execution
+    rect rgb(102, 255, 178)
+        Note over PM,R: Phase 3: Synchronized Execution
+        PM->>R: Dispatch Trigger (T_FOR - Rider_ETA)
+        R->>M: Rider Arrives (Just-In-Time)
     end
-    
-    rect rgb(232, 245, 233)
-    Note over R, PM: Phase 4: Ground Truth Feedback (Learning)
-    R->>PM: GPS Verified Handover (Actual T)
-    PM->>PM: EMA Update: Adjust Beta for Merchant
+
+    %% Phase 4: Ground Truth Feedback
+    rect rgb(255, 153, 204)
+        Note over R,PM: Phase 4: Ground Truth Feedback (Learning)
+        R->>PM: GPS Verified Handover (Actual T)
+        PM->>PM: EMA Update: Adjust Beta for Merchant
     end
 
 ---
