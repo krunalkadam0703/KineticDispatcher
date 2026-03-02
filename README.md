@@ -100,28 +100,30 @@ sequenceDiagram
     participant M as Merchant Tablet
     participant R as Rider Fleet
 
+    Note over C, R: Phase 1: Predictive Ingestion (System Initiation)
     C->>PE: Order Placed (Item ID, Qty)
     PE->>PE: Calculate T_Physics (Base * Rush * Env)
     
-    rect rgb(240, 240, 240)
-    Note over M, PE: Verification Gap: Merchant may signal "Ready" prematurely
-    M-->>PE: "Ready" Click (Premature Signal)
-    PE->>PE: Filter: max(Signal, Physics)
+    rect rgb(255, 243, 205)
+    Note over M, PE: Phase 2: Signal Filtering (The "Lie" Buffer)
+    M-->>PE: "Ready" Click (Untrusted Manual Signal)
+    PE->>PE: Validation: max(Signal, Physics)
     end
 
-    PM->>PM: Fetch learned Beta (Historical Lie)
-    PE->>PM: Combine: T_FOR = Filter + Beta
+    PM->>PM: Fetch learned Beta (Behavioral Bias)
+    PE->>PM: Combine: T_FOR = Validated Signal + Beta
     
-    PM->>R: Calculate T_Dispatch (T_FOR - Rider_ETA)
-    R->>M: Rider Arrives at "True Ready"
-    
-    rect rgb(200, 255, 200)
-    Note over R, PM: Feedback Loop
-    R->>PM: GPS Verified Handover Timestamp
-    PM->>PM: Update Beta (EMA) for next order
+    rect rgb(224, 242, 241)
+    Note over PM, R: Phase 3: Synchronized Execution
+    PM->>R: Dispatch Trigger (T_FOR - Rider_ETA)
+    R->>M: Rider Arrives (Just-In-Time)
     end
-
-```
+    
+    rect rgb(232, 245, 233)
+    Note over R, PM: Phase 4: Ground Truth Feedback (Learning)
+    R->>PM: GPS Verified Handover (Actual T)
+    PM->>PM: EMA Update: Adjust Beta for Merchant
+    end
 
 ---
 
@@ -144,7 +146,7 @@ sequenceDiagram
 
 ---
 
-**Author:** Krunal Kadam
+**Author:** Sourabh Bhosale,  Krunal Kadam
 
 **Email:** krunalkadam0703@gmail.com
 
